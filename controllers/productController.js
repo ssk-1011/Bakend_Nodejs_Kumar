@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const Firm = require('../models/Firm');
 
+
 // ADD PRODUCT
 const addProduct = async (req, res) => {
   try {
