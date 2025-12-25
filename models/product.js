@@ -4,10 +4,11 @@ const productSchema = new mongoose.Schema(
   {
     productName: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
     price: {
-      type: Number, // ✅ price should be Number
+      type: Number,
       required: true
     },
     description: {
@@ -16,14 +17,15 @@ const productSchema = new mongoose.Schema(
     category: [
       {
         type: String,
-        enum: ['Veg', 'Non-Veg'] // ✅ consistent with Firm
+        enum: ['Veg', 'Non-Veg']
       }
     ],
     image: {
       type: String
     },
     bestSeller: {
-      type: Boolean // ✅ better than String
+      type: Boolean,
+      default: false
     },
     firm: {
       type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +36,5 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ PREVENT OverwriteModelError
 module.exports =
   mongoose.models.Product || mongoose.model('Product', productSchema);

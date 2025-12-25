@@ -1,11 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {
-  addProduct,
-  getProductsByFirm,
-  deleteProductById
-} = require('../controllers/productController');
-
+const { addFirm, deleteFirmById } = require('../controllers/firmController');
+const verifyToken = require('../middleware/verifyToken');
 const multer = require('multer');
 const path = require('path');
 
@@ -18,12 +14,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // ROUTES
-router.post('/add/:firmId', upload.single('image'), addProduct);
-router.get('/firm/:firmId', getProductsByFirm);
-router.delete('/:productId', deleteProductById);
+router.post('/add', verifyToken, upload.single('image'), addFirm);
+router.delete('/:firmId', verifyToken, deleteFirmById);
 
 router.get('/upload/:imageName', (req, res) => {
   res.sendFile(`${__dirname}/../uploads/${req.params.imageName}`);
 });
 
 module.exports = router;
+
+

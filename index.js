@@ -1,41 +1,41 @@
 const express = require('express');
-const app = express();
 const dotenv = require('dotenv');
-const moongoose = require('mongoose');
-const venderRoutes = require('./routes/venderRoutes');
-const firmRout = require('./routes/firmRout');
-const productRoutes = require('./routes/productRoutes');
-const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 
-const port =4000;
+const connectDB = require('./config/db');
+
+const vendorRoutes = require('./routes/vendorRoutes');
+const firmRoutes = require('./routes/firmRoutes');
+const productRoutes = require('./routes/productRoutes');
+
 dotenv.config();
+const app = express();
 
+// ENSURE UPLOADS FOLDER EXISTS
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
 
-moongoose.connect(process.env.MONGO_DB_URL)
-.then(()=>{
-  console.log("MoongoDB connected successfully"); 
-})
-.catch((err)=>{
-  console.log("MoongoDB connection failed", err);
+// MIDDLEWARE
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// DATABASE
+connectDB();
+
+// ROUTES
+app.use('/api/vendors', vendorRoutes);
+app.use('/api/firms', firmRoutes);
+app.use('/api/products', productRoutes);
+
+// TEST ROUTE
+app.get('/', (req, res) => {
+  res.send('🚀 Foodies Backend is running successfully');
 });
 
-app.get('/home',(req,res)=>{
-  res.send("Welcome to Foodies Backend Hello Satish Kumar");
-})
-
-app.use(bodyParser.json());
-app.use("/vender", venderRoutes);
-app.use("/firm", firmRout);
-app.use("/product", productRoutes);
-app.use('/uploads', express.static("uploads"));
-
-
-
-app.listen(port,()=>{
-  console.log(`Server is running on port ${port}`);
-})
-
-
-
-
+// SERVER
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+});
